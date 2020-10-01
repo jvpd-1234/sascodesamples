@@ -1,0 +1,20 @@
+data want;
+set class;
+
+*by group specified;
+by sex;
+
+*keep across rows;
+retain max_age;
+
+*if first of each Sex group;
+if first.sex then max_age = age;
+*other records;
+else max_age = max(age, max_age);
+
+*if last of group;
+if last.sex then output;
+
+*keep only relevant variables;
+keep sex age;
+run;
