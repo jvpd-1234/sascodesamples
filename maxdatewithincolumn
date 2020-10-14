@@ -1,0 +1,22 @@
+ Proc SQL;
+  Create table work.SUMLD_3a as
+  Select distinct
+      USUBJID
+    , TRTSDT
+    , PARCAT1
+    , "DERIVED" as PARCAT2 /* same as paracat2=derived*/ 
+    , AEVAL
+    , AREGION
+    , "SUMLD3" as PARAMCD
+    , "Sum of Lesion Diameters (mm) Base = Baseline without Lymph Nodes" as PARAM
+    , adt as odt /*same as odt =adt */
+    , max(ADT) as ADT format=date9. /* max date across visit*/ 
+    , calculated ADT - TRTSDT + (calculated ADT >= TRTSDT) as ADY /* calculate ady within the date */ 
+    , AVISIT
+    , AVISITN
+    , sum(AVAL) as AVAL
+  From adamdata.TRIND1 /*12788 and 30 vars*/ 
+  Where PARCAT1 = "TARGET" and PARCAT2 = "LESIONS" and index(ORGAN,"LYMPH NODE") = 0 /*subsets to 6303*/ 
+  Group by USUBJID, AEVAL, AREGION, AVISITN
+  ;
+Quit;
